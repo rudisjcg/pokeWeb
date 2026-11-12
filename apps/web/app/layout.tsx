@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
+import AuthProvider from "@/components/auth/AuthProvider";
+import Banner from "@/components/Banner";
 import Navbar from "@/components/Navbar";
 import { strings } from "@/lib/strings";
 import "./globals.css";
@@ -22,10 +24,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" className={poppins.variable}>
       <body>
-        <div className="bg-primary h-full">
-          <Navbar />
-          {children}
-        </div>
+        <AuthProvider>
+          <div className="bg-primary h-full">
+            <Navbar />
+            {children}
+            <Banner />
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
