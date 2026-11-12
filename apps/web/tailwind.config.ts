@@ -1,22 +1,34 @@
 import type { Config } from "tailwindcss";
-import animated from "tailwindcss-animated";
 
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./canvas/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-      keyframes: {
-        shimmer: {
-          "100%": { transform: "translateX(100%)" },
+      colors: {
+        ink: {
+          950: "var(--ink-950)",
+          900: "var(--ink-900)",
+          800: "var(--ink-800)",
+          700: "var(--ink-700)",
         },
+        line: "var(--line)",
+        fg: "var(--fg)",
+        muted: "var(--muted)",
+        volt: "var(--volt)",
+        danger: "var(--danger)",
+        type: "var(--type)",
+        "type-2": "var(--type-2)",
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+      },
+      maxWidth: {
+        page: "1200px",
       },
     },
   },
-  plugins: [animated],
+  plugins: [],
 };
 
 export default config;

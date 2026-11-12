@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FALLBACK_SPRITE } from "@/lib/constants";
 import type { PokemonSummary } from "@/lib/pokeapi.types";
-import TypeBadge from "./TypeBadge";
+import TypeBadge from "./ui/TypeBadge";
 
 export default function PokemonCard({ pokemon }: { pokemon: PokemonSummary }) {
   return (

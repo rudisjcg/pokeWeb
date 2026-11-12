@@ -6,7 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Modal from "@/components/auth/Modal";
-import TypeBadge from "@/components/TypeBadge";
+import TypeBadge from "@/components/ui/TypeBadge";
 import { FALLBACK_SPRITE } from "@/lib/constants";
 import { removeFavorite } from "@/lib/favorites";
 import { fadeIn } from "@/lib/motion";
