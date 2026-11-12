@@ -6,6 +6,7 @@ import { addFavorite } from "@/lib/favorites";
 import { strings } from "@/lib/strings";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./auth/AuthProvider";
+import Button from "./ui/Button";
 
 type Props = { pokemonId: number; pokemonName: string };
 
@@ -61,8 +62,8 @@ export default function AddFavoriteButton({ pokemonId, pokemonName }: Props) {
   const inList = Boolean(profile) && added;
 
   return (
-    <button type="button" onClick={handleClick} disabled={loading || inList} className="border p-2 rounded-lg disabled:opacity-60">
+    <Button onClick={handleClick} disabled={loading || inList} variant={inList ? "ghost" : "primary"}>
       {inList ? strings.pokemon.added : strings.pokemon.add}
-    </button>
+    </Button>
   );
 }

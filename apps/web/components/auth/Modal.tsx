@@ -29,7 +29,7 @@ export default function Modal({ open, onClose, label, className = "", children }
       onClick={(event) => {
         if (event.target === ref.current) onClose();
       }}
-      className={`m-auto p-0 bg-transparent text-white backdrop:bg-black/50 ${className}`}
+      className={`m-auto p-0 bg-transparent max-w-[calc(100vw-32px)] backdrop:bg-ink-950/80 backdrop:backdrop-blur-sm ${className}`}
     >
       {open && children}
     </dialog>

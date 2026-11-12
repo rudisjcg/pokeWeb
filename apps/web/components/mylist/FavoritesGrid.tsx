@@ -1,17 +1,19 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import CenterCanvas from "@/canvas/Center";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Modal from "@/components/auth/Modal";
+import { dexNumber } from "@/components/PokemonCard";
+import Button from "@/components/ui/Button";
+import Panel from "@/components/ui/Panel";
 import TypeBadge from "@/components/ui/TypeBadge";
 import { FALLBACK_SPRITE } from "@/lib/constants";
 import { removeFavorite } from "@/lib/favorites";
-import { fadeIn } from "@/lib/motion";
 import type { PokemonSummary } from "@/lib/pokeapi.types";
 import { strings } from "@/lib/strings";
+import { typeStyle } from "@/lib/typeColors";
 
 type Props = {
   username: string;
@@ -40,79 +42,80 @@ export default function FavoritesGrid({ username, avatarUrl, initialFavorites }:
   }
 
   return (
-    <section className="mt-20 flex flex-wrap gap-10 justify-center sm:h-[100vh]">
-      <motion.div
-        variants={fadeIn("right", "spring", 0, 0.75)}
-        className="border w-[200px] h-fit rounded-md pb-4"
-      >
-        <div className="flex flex-col items-center gap-6 mt-5">
-          <div className="border-2 border-gray-400 text-center flex justify-center items-center w-[150px] h-[150px] rounded-full">
-            <img
-              className="w-full h-full object-contain rounded-full "
-              src={avatarUrl ?? FALLBACK_SPRITE}
-              alt={strings.myList.avatarAlt}
-            />
-          </div>
-          <h1>{username}</h1>
-          <p className="text-left" data-testid="favorites-count">
-            {strings.myList.count}: {favorites.length}
+    <div className="grid gap-8 lg:grid-cols-[280px_1fr] items-start">
+      <Panel className="p-6 flex lg:flex-col items-center gap-5 lg:text-center">
+        <img
+          className="w-24 h-24 lg:w-36 lg:h-36 rounded-full object-contain bg-ink-950 border-2 border-volt"
+          src={avatarUrl ?? FALLBACK_SPRITE}
+          alt={strings.myList.avatarAlt}
+        />
+        <div className="flex flex-col gap-1 lg:items-center">
+          <p className="font-display font-bold text-[24px] break-all">{username}</p>
+          <p className="text-muted" data-testid="favorites-count">
+            {strings.myList.count(favorites.length)}
           </p>
-          <button type="button" className="btn-default remove" onClick={() => void signOut()}>
+          <Button variant="ghost" className="mt-3" onClick={() => void signOut()}>
             {strings.myList.signOut}
-          </button>
+          </Button>
         </div>
-      </motion.div>
+      </Panel>
 
-      <motion.div variants={fadeIn("left", "spring", 0, 0.75)} className="border w-[500px] h-[500px] overflow-y-auto">
-        <div className="flex flex-wrap gap-5 p-3">
-          {favorites.length === 0 ? (
-            <p>{strings.myList.empty}</p>
-          ) : (
-            <ul className="flex flex-wrap gap-5 items-center">
-              {favorites.map((pokemon) => (
-                <li key={pokemon.id} className="shadow-inner">
-                  <button
-                    type="button"
-                    data-testid="favorite-item"
-                    aria-label={pokemon.name}
-                    onClick={() => setSelectedId(pokemon.id)}
-                  >
-                    <img
-                      className="w-[50px] bg-[#333638] border-2 border-[#1E1E1E] rounded-sm p-1"
-                      src={pokemon.sprite ?? FALLBACK_SPRITE}
-                      alt=""
-                    />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+      {favorites.length === 0 ? (
+        <div className="flex flex-col items-start gap-4">
+          <CenterCanvas className="w-full max-w-[420px] h-[260px]" />
+          <h2 className="text-[30px]">{strings.myList.emptyTitle}</h2>
+          <p className="text-muted max-w-[48ch]">{strings.myList.empty}</p>
+          <Button href="/pokedex">{strings.myList.goToPokedex}</Button>
         </div>
-      </motion.div>
-
-      <Modal open={selected !== null} onClose={() => setSelectedId(null)} label={selected?.name ?? ""}>
-        {selected && (
-          <div className="bg-[#333638] rounded-md h-[400px] px-6 flex flex-col justify-around items-center">
-            <img className="w-[250px]" src={selected.sprite ?? FALLBACK_SPRITE} alt={selected.name} />
-            <div className="flex justify-center items-center gap-2">
-              <span>{selected.name}</span>
-              <div className="flex gap-1">
-                {selected.types.map((type) => (
-                  <TypeBadge key={type} type={type} />
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-wrap justify-center gap-10">
-              <Link className="btn-default" href={`/pokemon/${selected.name}`}>
-                {strings.myList.details}
-              </Link>
-              <button type="button" onClick={() => void handleRemove(selected)} className="btn-default remove">
-                {strings.myList.remove}
+      ) : (
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          {favorites.map((pokemon) => (
+            <li key={pokemon.id} style={typeStyle(pokemon.types)}>
+              <button
+                type="button"
+                data-testid="favorite-item"
+                onClick={() => setSelectedId(pokemon.id)}
+                className="cut type-slash relative w-full min-h-[132px] p-4 text-left overflow-hidden hover:brightness-125 transition-[filter]"
+              >
+                <span className="font-display font-semibold text-muted text-[14px] tabular-nums">
+                  {dexNumber(pokemon.id)}
+                </span>
+                <span className="block font-display font-bold text-[18px] capitalize max-w-[60%] break-words">
+                  {pokemon.name.replaceAll("-", " ")}
+                </span>
+                <img
+                  src={pokemon.sprite ?? FALLBACK_SPRITE}
+                  alt=""
+                  loading="lazy"
+                  className="absolute right-2 bottom-2 w-24 h-24 object-contain drop-shadow-[0_10px_14px_rgb(0_0_0/0.55)]"
+                />
               </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <Modal open={selected !== null} onClose={() => setSelectedId(null)} label={selected?.name ?? ""} className="w-[420px]">
+        {selected && (
+          <Panel tone="type" slash style={typeStyle(selected.types)} className="p-6 flex flex-col items-center gap-4">
+            <img className="w-[220px] h-[220px] object-contain" src={selected.sprite ?? FALLBACK_SPRITE} alt="" />
+            <h2 className="text-[28px] capitalize">{selected.name.replaceAll("-", " ")}</h2>
+            <div className="flex gap-1.5">
+              {selected.types.map((type) => (
+                <TypeBadge key={type} type={type} />
+              ))}
             </div>
-          </div>
+            <div className="flex flex-wrap justify-center gap-3 mt-2">
+              <Button href={`/pokemon/${selected.name}`} variant="ghost">
+                {strings.myList.details}
+              </Button>
+              <Button variant="danger" onClick={() => void handleRemove(selected)}>
+                {strings.myList.remove}
+              </Button>
+            </div>
+          </Panel>
         )}
       </Modal>
-    </section>
+    </div>
   );
 }

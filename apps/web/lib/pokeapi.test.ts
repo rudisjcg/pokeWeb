@@ -4,6 +4,7 @@ import {
   getEvolutionChain,
   getPokemon,
   getPokemonSummaries,
+  listPokemonIdsByType,
   listPokemonNames,
   normalizeQuery,
 } from "./pokeapi";
@@ -206,5 +207,35 @@ describe("getEvolutionChain", () => {
     const chain = await getEvolutionChain("https://pokeapi.co/api/v2/pokemon-species/133/");
 
     expect(chain.map((stage) => stage.name)).toEqual(["eevee", "vaporeon", "jolteon"]);
+  });
+});
+
+describe("listPokemonIdsByType", () => {
+  it("returns the ids of the pokemon of a type in ascending order", async () => {
+    const fetchMock = stubFetch(() =>
+      jsonResponse({
+        pokemon: [
+          { pokemon: { name: "charmeleon", url: "https://pokeapi.co/api/v2/pokemon/5/" } },
+          { pokemon: { name: "charizard-mega-x", url: "https://pokeapi.co/api/v2/pokemon/10034/" } },
+          { pokemon: { name: "charmander", url: "https://pokeapi.co/api/v2/pokemon/4/" } },
+        ],
+      }),
+    );
+
+    await expect(listPokemonIdsByType("fire")).resolves.toEqual([4, 5, 10034]);
+    expect(fetchMock).toHaveBeenCalledWith("https://pokeapi.co/api/v2/type/fire", { next: { revalidate: 86400 } });
+  });
+
+  it("returns an empty list for a type that does not exist", async () => {
+    stubFetch(() => new Response("Not Found", { status: 404 }));
+
+    await expect(listPokemonIdsByType("lava")).resolves.toEqual([]);
+  });
+
+  it("does not call the API for a malformed type", async () => {
+    const fetchMock = stubFetch(() => jsonResponse({ pokemon: [] }));
+
+    await expect(listPokemonIdsByType("../pokemon/1")).resolves.toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

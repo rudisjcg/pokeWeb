@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MAX_IDS_PER_REQUEST, parseIds } from "./parseIds";
+import { MAX_IDS_PER_REQUEST, parseIds, parseType } from "./parseIds";
 
 describe("parseIds", () => {
   it("parses a comma separated list", () => {
@@ -26,5 +26,18 @@ describe("parseIds", () => {
   it("rejects more ids than the per-request limit", () => {
     const tooMany = Array.from({ length: MAX_IDS_PER_REQUEST + 1 }, (_, index) => index + 1).join(",");
     expect(parseIds(tooMany)).toBeNull();
+  });
+});
+
+describe("parseType", () => {
+  it("accepts a known type", () => {
+    expect(parseType("fire")).toBe("fire");
+  });
+
+  it("rejects anything that is not exactly one of the 18 types", () => {
+    expect(parseType("FIRE")).toBeNull();
+    expect(parseType("lava")).toBeNull();
+    expect(parseType("")).toBeNull();
+    expect(parseType(null)).toBeNull();
   });
 });

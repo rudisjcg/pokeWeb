@@ -83,9 +83,23 @@
   /* Diagonal slash of type colour used behind artwork. */
   .type-slash {
     background:
-      linear-gradient(115deg, transparent 0 46%, color-mix(in srgb, var(--type-2) 34%, transparent) 46% 58%, transparent 58%),
+      linear-gradient(115deg, transparent 0 46%, color-mix(in srgb, var(--type-2) 26%, transparent) 46% 58%, transparent 58%),
       radial-gradient(120% 90% at 85% 0%, color-mix(in srgb, var(--type) 38%, transparent), transparent 62%),
       var(--ink-800);
+  }
+
+  /* Home hero: a thin bright volt blade with a faint wide band behind it. */
+  .hero-slash {
+    background:
+      linear-gradient(
+        115deg,
+        transparent 0 47.6%,
+        var(--volt) 47.6% 48%,
+        color-mix(in srgb, var(--volt) 9%, transparent) 48% 62%,
+        transparent 62%
+      ),
+      radial-gradient(90% 80% at 80% 45%, color-mix(in srgb, var(--volt) 16%, transparent), transparent 65%),
+      var(--ink-900);
   }
 
   /* Holographic card: tilt and glare follow the pointer through --rx/--ry/--mx/--my,
@@ -155,6 +169,12 @@
   }
 }
 
+/* Card artwork morphing into the Pokémon page header (see PokemonCard / ParallaxArt). */
+::view-transition-group(.morph) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 @keyframes stat-grow {
   from {
     transform: scaleX(0);
@@ -184,5 +204,11 @@
   .stat-fill,
   .skeleton::after {
     animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

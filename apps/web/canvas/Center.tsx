@@ -1,17 +1,18 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useCanRender3d } from "@/lib/useCanRender3d";
 
-const ModelCanvas = dynamic(() => import("./ModelCanvas"), { ssr: false });
+const CenterScene = dynamic(() => import("./CenterScene"), { ssr: false });
 
-export default function CenterCanvas() {
+/** Decorative Pokémon Center. Renders nothing without WebGL or with reduced motion. */
+export default function CenterCanvas({ className = "" }: { className?: string }) {
+  const canRender = useCanRender3d();
+  if (!canRender) return null;
+
   return (
-    <ModelCanvas
-      modelUrl="/pokecenter/scene.gltf"
-      className="max-w-[250px] md:block hidden"
-      mobileQuery="(max-width: 400px)"
-      scale={{ desktop: 4, mobile: 0.6 }}
-      position={{ desktop: [0, -0.25, 0], mobile: [0, -4, 0] }}
-    />
+    <div aria-hidden="true" className={className}>
+      <CenterScene />
+    </div>
   );
 }

@@ -1,12 +1,12 @@
 import Featured from "@/components/Featured";
-import Header from "@/components/Header";
+import Hero from "@/components/home/Hero";
 
 export const revalidate = 86400;
 
 export default function HomePage() {
   return (
     <>
-      <Header />
+      <Hero />
       <Featured />
     </>
   );

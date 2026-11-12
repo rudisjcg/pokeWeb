@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import AddFavoriteButton from "@/components/AddFavoriteButton";
 import EvolutionChain from "@/components/pokemon/EvolutionChain";
-import StatsChart from "@/components/pokemon/StatsChart";
+import PokemonHero from "@/components/pokemon/PokemonHero";
+import PrevNext from "@/components/pokemon/PrevNext";
 import TypeMatchups from "@/components/pokemon/TypeMatchups";
-import SectionWrapper from "@/components/SectionWrapper";
-import Tilt from "@/components/Tilt";
-import { FALLBACK_SPRITE, styles } from "@/lib/constants";
-import { getEvolutionChain, getPokemon } from "@/lib/pokeapi";
+import Panel from "@/components/ui/Panel";
+import StatBar from "@/components/ui/StatBar";
+import { neighbors } from "@/lib/neighbors";
+import { getEvolutionChain, getPokemon, listPokemonNames } from "@/lib/pokeapi";
+import { formatHeight, formatWeight, statTotal } from "@/lib/stats";
 import { strings } from "@/lib/strings";
+import { typeStyle } from "@/lib/typeColors";
 
 export const revalidate = 86400;
 
@@ -33,64 +35,60 @@ export default async function PokemonPage({ params }: Props) {
   const pokemon = await getPokemon(id);
   if (!pokemon) notFound();
 
-  const evolution = await getEvolutionChain(pokemon.speciesUrl);
+  const [evolution, names] = await Promise.all([getEvolutionChain(pokemon.speciesUrl), listPokemonNames()]);
+  const { prev, next } = neighbors(pokemon.id, names);
+  const statValues = pokemon.stats.map((stat) => stat.value);
 
   return (
-    <SectionWrapper>
-      <section className="relative w-full h-auto mx-auto">
-        <div className="mt-10">
-          <div className={`${styles.padding} bg-tertiary w-full relative h-fit rounded-lg`}>
-            <div className="flex justify-center items-center gap-10">
-              <div className="flex items-center gap-2">
-                <h1 className="w-fit text-center text-[24px] uppercase">{pokemon.name} </h1>
-                <span className="text-[16px] text-gray-400">#{pokemon.id}</span>
-              </div>
-              <AddFavoriteButton pokemonId={pokemon.id} pokemonName={pokemon.name} />
-            </div>
-            <div className="w-[100%] flex flex-col gap-5">
-              <div className="w-full flex flex-wrap justify-center items-end">
-                <div className="md:w-[50%]">
-                  <Tilt>
-                    <img src={pokemon.sprite ?? FALLBACK_SPRITE} alt={pokemon.name} className="w-[350px]" />
-                  </Tilt>
-                </div>
-                <div className="md:w-[50%]">
-                  <div className={` max-h-[300px] p-2 ${styles.padding}`}>
-                    <h2 className={styles.sectionSubText}>{strings.pokemon.stats}</h2>
-                    <StatsChart pokemonName={pokemon.name} values={pokemon.stats.map((stat) => stat.value)} />
-                  </div>
-                </div>
-              </div>
-              <div className="w-full h-fit mt-10">
-                <h2 className={`${styles.sectionSubText} text-center`}>{strings.pokemon.details}</h2>
-                <EvolutionChain stages={evolution} currentId={pokemon.id} />
-                <div className="flex flex-wrap justify-center items-center gap-5 mb-10 mt-20">
-                  <div className={`${styles.padding} flex gap-2  bg-primary w-fit p-1 rounded-lg `}>
-                    <div className="w-fit">
-                      <p>
-                        {strings.pokemon.height}: {pokemon.height}
-                      </p>
-                      <p>
-                        {strings.pokemon.weight}: {pokemon.weight}
-                      </p>
-                      <p>
-                        {strings.pokemon.baseExperience}: {pokemon.baseExperience ?? "—"}
-                      </p>
-                      <p>{strings.pokemon.abilities}:</p>
-                      <ul>
-                        {pokemon.abilities.map((ability) => (
-                          <li key={ability}> {ability}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  <TypeMatchups types={pokemon.types} />
-                </div>
-              </div>
-            </div>
+    <article style={typeStyle(pokemon.types)}>
+      <PokemonHero pokemon={pokemon} />
+
+      <div className="max-w-page mx-auto px-4 sm:px-6 py-10 grid gap-6 lg:grid-cols-[3fr_2fr]">
+        <Panel className="p-6 sm:p-8">
+          <h2 className="text-[26px] mb-6">{strings.pokemon.stats}</h2>
+          <div className="flex flex-col gap-4">
+            {pokemon.stats.map((stat, index) => (
+              <StatBar key={stat.name} label={strings.pokemon.statNames[index] ?? stat.name} value={stat.value} />
+            ))}
           </div>
+          <p className="mt-6 pt-4 border-t border-line flex justify-between font-display font-semibold">
+            <span>{strings.pokemon.total}</span>
+            <span data-testid="stat-total" className="tabular-nums text-[20px]">
+              {statTotal(statValues)}
+            </span>
+          </p>
+        </Panel>
+
+        <Panel className="p-6 sm:p-8">
+          <h2 className="text-[26px] mb-6">{strings.pokemon.data}</h2>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
+            <dt className="text-muted">{strings.pokemon.height}</dt>
+            <dd className="font-medium">{formatHeight(pokemon.height)}</dd>
+            <dt className="text-muted">{strings.pokemon.weight}</dt>
+            <dd className="font-medium">{formatWeight(pokemon.weight)}</dd>
+            <dt className="text-muted">{strings.pokemon.baseExperience}</dt>
+            <dd className="font-medium">{pokemon.baseExperience ?? "—"}</dd>
+            <dt className="text-muted">{strings.pokemon.abilities}</dt>
+            <dd className="font-medium capitalize">
+              {pokemon.abilities.map((ability) => ability.replaceAll("-", " ")).join(", ")}
+            </dd>
+          </dl>
+        </Panel>
+
+        <Panel className="p-6 sm:p-8 lg:col-span-2">
+          <h2 className="text-[26px] mb-6">{strings.pokemon.evolution}</h2>
+          <EvolutionChain stages={evolution} currentId={pokemon.id} />
+        </Panel>
+
+        <Panel className="p-6 sm:p-8 lg:col-span-2">
+          <h2 className="text-[26px] mb-6">{strings.pokemon.matchups}</h2>
+          <TypeMatchups types={pokemon.types} />
+        </Panel>
+
+        <div className="lg:col-span-2">
+          <PrevNext prev={prev} next={next} />
         </div>
-      </section>
-    </SectionWrapper>
+      </div>
+    </article>
   );
 }

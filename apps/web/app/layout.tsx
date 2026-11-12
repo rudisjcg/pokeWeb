@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Chakra_Petch, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 import AuthProvider from "@/components/auth/AuthProvider";
-import Banner from "@/components/Banner";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { strings } from "@/lib/strings";
 import "./globals.css";
@@ -32,11 +32,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="es" className={`${display.variable} ${body.variable}`} data-scroll-behavior="smooth">
       <body>
         <AuthProvider>
-          <div className="bg-primary h-full">
-            <Navbar />
-            {children}
-            <Banner />
-          </div>
+          <Navbar />
+          <main className="pt-[var(--nav-height)]">{children}</main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

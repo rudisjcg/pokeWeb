@@ -6,9 +6,10 @@ import { toast } from "sonner";
 import { authErrorMessage } from "@/lib/authErrors";
 import { strings } from "@/lib/strings";
 import { createClient } from "@/lib/supabase/client";
+import Button from "@/components/ui/Button";
+import Field from "@/components/ui/Field";
+import Panel from "@/components/ui/Panel";
 import Modal from "./Modal";
-
-const inputClass = "h-10 mt-8 rounded-md bg-transparent border border-gray-700 p-6";
 
 export default function LoginModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
@@ -45,44 +46,32 @@ export default function LoginModal({ open, onClose }: { open: boolean; onClose: 
   }
 
   return (
-    <Modal open={open} onClose={onClose} label={strings.auth.loginTitle} className="w-[90%] md:w-[560px]">
-      <div className="w-full bg-black text-white border border-gray-700 rounded-lg flex justify-center pb-8">
-        <form className="w-[90%] mt-8 flex flex-col" onSubmit={handleSubmit} noValidate>
-          <h1 className="mt-4 font-bold text-4xl">{strings.auth.loginTitle}</h1>
-          <input
-            aria-label={strings.auth.email}
-            placeholder={strings.auth.email}
+    <Modal open={open} onClose={onClose} label={strings.auth.loginTitle} className="w-[460px]">
+      <Panel className="p-6 sm:p-8">
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+          <h2 className="text-[28px]">{strings.auth.loginTitle}</h2>
+          <Field
+            label={strings.auth.email}
+            type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className={inputClass}
-            type="email"
           />
-          <input
-            aria-label={strings.auth.password}
-            placeholder={strings.auth.password}
+          <Field
+            label={strings.auth.password}
+            type="password"
             autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className={inputClass}
-            type="password"
           />
-          <button
-            type="submit"
-            disabled={working}
-            className="bg-white text-black w-full font-bold text-lg p-2 mt-8 rounded-md disabled:opacity-60"
-          >
+          <Button type="submit" size="lg" disabled={working}>
             {working ? strings.auth.working : strings.auth.submitLogin}
-          </button>
-          <button
-            type="button"
-            onClick={handleGoogle}
-            className="bg-transparent border border-white text-white w-full font-bold text-lg p-2 mt-4 rounded-md"
-          >
+          </Button>
+          <Button variant="ghost" onClick={handleGoogle}>
             {strings.auth.google}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Panel>
     </Modal>
   );
 }

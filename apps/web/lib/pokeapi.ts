@@ -95,6 +95,15 @@ export async function getPokemonSummaries(ids: number[]): Promise<PokemonSummary
     .map(({ id, name, sprite, types }) => ({ id, name, sprite, types }));
 }
 
+/** National numbers of every Pokémon of a type, ascending. Empty when the type does not exist. */
+export async function listPokemonIdsByType(type: string): Promise<number[]> {
+  if (!/^[a-z]+$/.test(type)) return [];
+
+  const data = await fetchJson<{ pokemon: { pokemon: { url: string } }[] }>(`${API}/type/${type}`);
+  if (!data) return [];
+  return data.pokemon.map(({ pokemon }) => idFromUrl(pokemon.url)).sort((a, b) => a - b);
+}
+
 function flattenChain(link: ApiChainLink): EvolutionStage[] {
   const id = idFromUrl(link.species.url);
   const stage: EvolutionStage = { id, name: link.species.name, sprite: `${HOME_SPRITES}/${id}.png` };

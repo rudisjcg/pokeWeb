@@ -7,9 +7,10 @@ import { authErrorMessage } from "@/lib/authErrors";
 import { AVATARS } from "@/lib/constants";
 import { strings } from "@/lib/strings";
 import { createClient } from "@/lib/supabase/client";
+import Button from "@/components/ui/Button";
+import Field from "@/components/ui/Field";
+import Panel from "@/components/ui/Panel";
 import Modal from "./Modal";
-
-const inputClass = "h-10 mt-8 rounded-md bg-transparent border border-gray-700 p-6";
 
 function randomAvatar(): string {
   return AVATARS[Math.floor(Math.random() * AVATARS.length)] ?? "/assets/profilePictures/pfp1.png";
@@ -81,69 +82,45 @@ export default function SignUpModal({ open, onClose }: { open: boolean; onClose:
   }
 
   return (
-    <Modal open={open} onClose={handleClose} label={strings.auth.signUpTitle} className="w-[90%] md:w-[560px]">
-      <div className="w-full bg-black text-white border border-gray-700 rounded-lg flex justify-center pb-8">
+    <Modal open={open} onClose={handleClose} label={strings.auth.signUpTitle} className="w-[460px]">
+      <Panel className="p-6 sm:p-8">
         {confirmationSent ? (
-          <div className="w-[90%] mt-8 flex flex-col">
-            <h1 className="mt-4 font-bold text-4xl">{strings.auth.signUpTitle}</h1>
-            <p className="mt-8" role="status">
-              {strings.auth.checkEmail}
-            </p>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="bg-white text-black w-full font-bold text-lg p-2 mt-8 rounded-md"
-            >
-              {strings.auth.close}
-            </button>
+          <div className="flex flex-col gap-5">
+            <h2 className="text-[28px]">{strings.auth.signUpTitle}</h2>
+            <p role="status">{strings.auth.checkEmail}</p>
+            <Button onClick={handleClose}>{strings.auth.close}</Button>
           </div>
         ) : (
-          <form className="w-[90%] mt-8 flex flex-col" onSubmit={handleSubmit} noValidate>
-            <h1 className="mt-4 font-bold text-4xl">{strings.auth.signUpTitle}</h1>
-            <input
-              aria-label={strings.auth.username}
-              aria-invalid={usernameError !== null}
-              aria-describedby={usernameError ? "signup-username-error" : undefined}
-              placeholder={strings.auth.username}
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+            <h2 className="text-[28px]">{strings.auth.signUpTitle}</h2>
+            <Field
+              label={strings.auth.username}
+              type="text"
               autoComplete="username"
+              error={usernameError}
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className={inputClass}
-              type="text"
             />
-            {usernameError && (
-              <p id="signup-username-error" role="alert" className="mt-2 text-red-400 text-sm">
-                {usernameError}
-              </p>
-            )}
-            <input
-              aria-label={strings.auth.email}
-              placeholder={strings.auth.email}
+            <Field
+              label={strings.auth.email}
+              type="email"
               autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className={inputClass}
-              type="email"
             />
-            <input
-              aria-label={strings.auth.password}
-              placeholder={strings.auth.password}
+            <Field
+              label={strings.auth.password}
+              type="password"
               autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className={inputClass}
-              type="password"
             />
-            <button
-              type="submit"
-              disabled={working}
-              className="bg-white text-black w-full font-bold text-lg p-2 mt-8 rounded-md disabled:opacity-60"
-            >
+            <Button type="submit" size="lg" disabled={working}>
               {working ? strings.auth.working : strings.auth.submitSignUp}
-            </button>
+            </Button>
           </form>
         )}
-      </div>
+      </Panel>
     </Modal>
   );
 }
