@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" className={poppins.variable}>
+    <html lang="es" className={poppins.variable} data-scroll-behavior="smooth">
       <body>
         <AuthProvider>
           <div className="bg-primary h-full">

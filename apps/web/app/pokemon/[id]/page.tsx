@@ -45,7 +45,7 @@ export default async function PokemonPage({ params }: Props) {
                 <h1 className="w-fit text-center text-[24px] uppercase">{pokemon.name} </h1>
                 <span className="text-[16px] text-gray-400">#{pokemon.id}</span>
               </div>
-              <AddFavoriteButton />
+              <AddFavoriteButton pokemonId={pokemon.id} pokemonName={pokemon.name} />
             </div>
             <div className="w-[100%] flex flex-col gap-5">
               <div className="w-full flex flex-wrap justify-center items-end">
