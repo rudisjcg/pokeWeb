@@ -21,7 +21,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const pokemon = await getPokemon(decodeURIComponent(id));
+  const pokemon = await getPokemon(id);
   if (!pokemon) return { title: strings.errors.notFoundTitle };
 
   const name = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PokemonPage({ params }: Props) {
   const { id } = await params;
-  const pokemon = await getPokemon(decodeURIComponent(id));
+  const pokemon = await getPokemon(id);
   if (!pokemon) notFound();
 
   const evolution = await getEvolutionChain(pokemon.speciesUrl);
