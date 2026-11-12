@@ -163,3 +163,4 @@ Rediseño visual, wiki ampliada, team builder, cualquier lógica de batalla, mat
 3. Firebase no aparece en el código ni en las dependencias.
 4. El servidor de batallas responde al health check en Railway y rechaza WebSockets sin JWT válido.
 5. La CI pasa en verde: lint, typecheck, tests y build.
+6. Todo el código es TypeScript estricto: no queda ningún archivo `.js` o `.jsx` de aplicación (solo archivos de configuración que la herramienta exija en JS) y no se usa `any`.
