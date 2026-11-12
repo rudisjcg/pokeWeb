@@ -22,7 +22,9 @@ Para el botón "Continuar con Google", **Authentication → Providers → Google
 ## 2. Vercel (web)
 
 1. Importar el repositorio.
-2. **Root Directory**: `apps/web`. Vercel detecta Next.js y pnpm.
+2. **Root Directory**: `apps/web` (Settings → Build and Deployment). Vercel detecta Next.js y pnpm.
+
+   Si el proyecto de Vercel ya existía de cuando la web era Vite, este paso es obligatorio: sin él el despliegue falla con `No Output Directory named "dist" found`. Deja además **Output Directory**, **Build Command** e **Install Command** sin sobrescribir (interruptores "Override" apagados); `apps/web/vercel.json` ya fija el framework en Next.js.
 3. Variables de entorno (Production y Preview):
 
    | Variable | Valor |
