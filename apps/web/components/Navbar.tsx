@@ -29,7 +29,6 @@ export default function Navbar() {
             window.scrollTo(0, 0);
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logo.svg"
             alt=""
@@ -50,8 +49,7 @@ export default function Navbar() {
 
         <div className="sm:hidden flex flex-1 justify-end items-center">
           <button type="button" aria-label={strings.nav.menu} aria-expanded={toggle} onClick={() => setToggle(!toggle)}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+              <img
               src={toggle ? "/assets/close.svg" : "/assets/menu.svg"}
               alt=""
               className="w-[28px] h-[28px] object-contain cursor-pointer"
